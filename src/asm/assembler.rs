@@ -15,15 +15,13 @@ pub fn assemble(
 
     let out: Vec<u8> = match encoder {
         Encoder::Keystone(keystone) => {
-            keystone.asm(asm.to_string(),starting_virtual_address)
-                .map_err(|e| t!("errors.assemble",e=e))?
+            keystone
+                .asm(asm.to_string(), starting_virtual_address)
+                .map_err(|e| t!("errors.assemble", e = e))?
                 .bytes
-        },
-        Encoder::EBPF => {
-            assembler::assemble(asm)
-                .map_err(|e| t!("errors.assemble",e=e))?
         }
+        Encoder::EBPF => assembler::assemble(asm).map_err(|e| t!("errors.assemble", e = e))?,
     };
-    
+
     Ok(out)
 }

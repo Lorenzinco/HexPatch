@@ -1,7 +1,6 @@
 use hexpatch_keystone::Keystone;
 
-
-pub enum Encoder{
+pub enum Encoder {
     Keystone(Keystone),
     EBPF,
 }
