@@ -201,44 +201,33 @@ impl Header {
 
     pub(super) fn get_encoder_for_arch(architecture: &Architecture) -> Result<Encoder, Error> {
         match architecture {
-            Architecture::Aarch64 => Keystone::new(Arch::ARM64, Mode::LITTLE_ENDIAN)
-                .map(|keystone| Encoder::Keystone(keystone)),
-            Architecture::Aarch64_Ilp32 => Keystone::new(Arch::ARM64, Mode::LITTLE_ENDIAN)
-                .map(|keystone| Encoder::Keystone(keystone)),
-            Architecture::Arm => {
-                Keystone::new(Arch::ARM, Mode::ARM).map(|keystone| Encoder::Keystone(keystone))
+            Architecture::Aarch64 => {
+                Keystone::new(Arch::ARM64, Mode::LITTLE_ENDIAN).map(Encoder::Keystone)
             }
-            Architecture::I386 => {
-                Keystone::new(Arch::X86, Mode::MODE_32).map(|keystone| Encoder::Keystone(keystone))
+            Architecture::Aarch64_Ilp32 => {
+                Keystone::new(Arch::ARM64, Mode::LITTLE_ENDIAN).map(Encoder::Keystone)
             }
-            Architecture::X86_64 => {
-                Keystone::new(Arch::X86, Mode::MODE_64).map(|keystone| Encoder::Keystone(keystone))
-            }
+            Architecture::Arm => Keystone::new(Arch::ARM, Mode::ARM).map(Encoder::Keystone),
+            Architecture::I386 => Keystone::new(Arch::X86, Mode::MODE_32).map(Encoder::Keystone),
+            Architecture::X86_64 => Keystone::new(Arch::X86, Mode::MODE_64).map(Encoder::Keystone),
             Architecture::X86_64_X32 => {
-                Keystone::new(Arch::X86, Mode::MODE_32).map(|keystone| Encoder::Keystone(keystone))
+                Keystone::new(Arch::X86, Mode::MODE_32).map(Encoder::Keystone)
             }
-            Architecture::Hexagon => Keystone::new(Arch::HEXAGON, Mode::MODE_32)
-                .map(|keystone| Encoder::Keystone(keystone)),
-            Architecture::Mips => {
-                Keystone::new(Arch::MIPS, Mode::MIPS32).map(|keystone| Encoder::Keystone(keystone))
+            Architecture::Hexagon => {
+                Keystone::new(Arch::HEXAGON, Mode::MODE_32).map(Encoder::Keystone)
             }
-            Architecture::Mips64 => {
-                Keystone::new(Arch::MIPS, Mode::MIPS64).map(|keystone| Encoder::Keystone(keystone))
+            Architecture::Mips => Keystone::new(Arch::MIPS, Mode::MIPS32).map(Encoder::Keystone),
+            Architecture::Mips64 => Keystone::new(Arch::MIPS, Mode::MIPS64).map(Encoder::Keystone),
+            Architecture::PowerPc => Keystone::new(Arch::PPC, Mode::PPC32).map(Encoder::Keystone),
+            Architecture::PowerPc64 => Keystone::new(Arch::PPC, Mode::PPC64).map(Encoder::Keystone),
+            Architecture::S390x => {
+                Keystone::new(Arch::SYSTEMZ, Mode::MODE_32).map(Encoder::Keystone)
             }
-            Architecture::PowerPc => {
-                Keystone::new(Arch::PPC, Mode::PPC32).map(|keystone| Encoder::Keystone(keystone))
+            Architecture::Sparc64 => {
+                Keystone::new(Arch::SPARC, Mode::SPARC64).map(Encoder::Keystone)
             }
-            Architecture::PowerPc64 => {
-                Keystone::new(Arch::PPC, Mode::PPC64).map(|keystone| Encoder::Keystone(keystone))
-            }
-            Architecture::S390x => Keystone::new(Arch::SYSTEMZ, Mode::MODE_32)
-                .map(|keystone| Encoder::Keystone(keystone)),
-            Architecture::Sparc64 => Keystone::new(Arch::SPARC, Mode::SPARC64)
-                .map(|keystone| Encoder::Keystone(keystone)),
             Architecture::Bpf => Ok(Encoder::EBPF),
-            _ => {
-                Keystone::new(Arch::X86, Mode::MODE_64).map(|keystone| Encoder::Keystone(keystone))
-            }
+            _ => Keystone::new(Arch::X86, Mode::MODE_64).map(Encoder::Keystone),
         }
     }
 
@@ -261,9 +250,7 @@ impl Header {
         match self {
             Header::GenericHeader(header) => Self::get_encoder_for_arch(&header.architecture),
             Header::CustomHeader(header) => Self::get_encoder_for_arch(&header.architecture),
-            Header::None => {
-                Keystone::new(Arch::X86, Mode::MODE_64).map(|keystone| Encoder::Keystone(keystone))
-            }
+            Header::None => Keystone::new(Arch::X86, Mode::MODE_64).map(Encoder::Keystone),
         }
     }
 }
